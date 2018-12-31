@@ -11,7 +11,7 @@ case class Gene(value: Boolean) extends AnyVal
 
 object Population{
 
-  val GENES_IN_CHROMOSOME = 1000
+  val GENES_IN_CHROMOSOME = 500
 
   /**
     * Creates a random population
