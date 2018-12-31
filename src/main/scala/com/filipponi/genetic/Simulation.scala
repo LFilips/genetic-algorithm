@@ -1,12 +1,13 @@
 package com.filipponi.genetic
 
-import com.filipponi.genetic.CrossOver.crossover
 import com.filipponi.genetic.Fitness.calculateFitness
 import com.filipponi.genetic.Mutation.mutation
 import com.filipponi.genetic.OffSpring.{calculateFittestOffSpring, replaceLeastFitnessWithOffSpring}
 import com.filipponi.genetic.Population.GENES_IN_CHROMOSOME
 import com.filipponi.genetic.Selection.selection
+import com.filipponi.genetic.CrossOver.crossover
 
+import scala.annotation.tailrec
 import scala.util.Random
 
 object Simulation extends App {
@@ -19,7 +20,6 @@ object Simulation extends App {
 
   println("Starting population")
 
-
   val computedFitnessPopulation: Population = calculateFitness(startingPopulation)
 
   val random = new Random()
@@ -28,36 +28,31 @@ object Simulation extends App {
     () => random.nextInt(chromosomeSize)
   }
 
-  var population = computedFitnessPopulation
-  var iteration = 0
+  runIteration(computedFitnessPopulation,0)
 
+  @tailrec
+  def runIteration(population: Population,iteration: Int) : Population = {
+    if(population.chromosomes.max.fitness.get == GENES_IN_CHROMOSOME) population
+    else {
+      calculateFitness(population)
 
-  //since of the bad model i have to use the get at this point, the option was not a great idea
-  while (population.chromosomes.max.fitness.get < GENES_IN_CHROMOSOME) {
+      val fittestParents = selection(population)
+      printf(s"""Running iteration $iteration, fittest: ${fittestParents._1.fitness}, secondFittest: ${fittestParents._2.fitness} """)
 
-    calculateFitness(population)
+      val crossedOver = crossover(fittestParents, randomGenerator)
 
-    val fittestParents = selection(population)
-    printf(s"""Running iteration $iteration, fittest: ${fittestParents._1.fitness}, secondFittest: ${fittestParents._2.fitness} """)
+      val mutated = mutation(crossedOver, randomGenerator)
 
-    val crossedOver = crossover(fittestParents,randomGenerator)
+      val offSpring = calculateFittestOffSpring(mutated)
 
-    val mutated = mutation(crossedOver,randomGenerator)
+      printf(s"""Offspring ${offSpring.fitness}""")
 
-    val offSpring = calculateFittestOffSpring(mutated)
+      println()
 
-    printf(s"""Offspring ${offSpring.fitness}""")
-
-    println()
-
-    val newPopulation = replaceLeastFitnessWithOffSpring(population, offSpring)
-
-    population = newPopulation
-    iteration = iteration + 1
-
+      val newPopulation = replaceLeastFitnessWithOffSpring(population, offSpring)
+      runIteration(newPopulation,iteration+1)
+    }
 
   }
-
-
 
 }

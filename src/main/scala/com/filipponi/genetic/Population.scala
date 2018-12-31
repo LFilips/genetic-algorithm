@@ -18,11 +18,8 @@ object Population{
     * @return the randomPopulation
     */
   def apply(): Population = {
-
     val rand = Random
-
     Population(List.fill(GENES_IN_CHROMOSOME)(Chromosome(List.fill(GENES_IN_CHROMOSOME)(Gene(rand.nextBoolean())),None)))
-
   }
 
   def apply(chromosomes: Seq[Chromosome]): Population = new Population(chromosomes)
