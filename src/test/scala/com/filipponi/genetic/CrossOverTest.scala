@@ -10,10 +10,12 @@ class CrossOverTest extends FlatSpec with Matchers {
     val fittest = Chromosome(List(Gene(true), Gene(true), Gene(true), Gene(true), Gene(true)),None)
     val secondFittest = Chromosome(List(Gene(false), Gene(true), Gene(true), Gene(true), Gene(true)),None)
 
-    val (fittestCrossover,secondFittestCrossOver) = crossover((fittest,secondFittest), () => 2)
+    implicit val crossoverPointFunction: () => Int = () => 2
 
-    fittestCrossover should be (Chromosome(List(Gene(false), Gene(true), Gene(true), Gene(true), Gene(true)),None))
-    secondFittestCrossOver should be (Chromosome(List(Gene(true), Gene(true), Gene(true), Gene(true), Gene(true)),None))
+    val (fittestCrossover,secondFittestCrossOver) = crossover((fittest,secondFittest))
+
+    fittestCrossover should be (Chromosome(List(Gene(false), Gene(true), Gene(true), Gene(true), Gene(true)),Some(4)))
+    secondFittestCrossOver should be (Chromosome(List(Gene(true), Gene(true), Gene(true), Gene(true), Gene(true)),Some(5)))
 
   }
 

@@ -10,7 +10,9 @@ class MutationTest extends FlatSpec with Matchers {
     val fittest = Chromosome(List(Gene(true), Gene(true), Gene(true), Gene(true), Gene(true)),None)
     val secondFittest = Chromosome(List(Gene(false), Gene(true), Gene(true), Gene(true), Gene(true)),None)
 
-    val (fittestMutated,secondFittestMutated) = mutation((fittest,secondFittest),() => 2)
+    implicit val crossoverPointFunction = () => 2
+
+    val (fittestMutated,secondFittestMutated) = mutation((fittest,secondFittest))
 
     fittestMutated should be (Chromosome(List(Gene(true), Gene(true), Gene(false), Gene(true), Gene(true)),None))
     secondFittestMutated should be (Chromosome(List(Gene(false), Gene(true), Gene(false), Gene(true), Gene(true)),None))
